@@ -4,7 +4,6 @@
 /// немного переработанная версия старого компонента
 #pragma once
 
-#include <Arduino.h>
 #include <stdarg.h>
 
 #include "esphome.h"
@@ -992,7 +991,7 @@ namespace esphome
                 if ((item_type != AC_SIT_DELAY) && (item_type != AC_SIT_FUNC))
                 {
                     // какой-то неизвестный тип
-                    _debugMsg(F("_addSequenceStep: unknown sequence item type = %u"), ESPHOME_LOG_LEVEL_DEBUG, __LINE__, item_type);
+                    _debugMsg("_addSequenceStep: unknown sequence item type = %u", ESPHOME_LOG_LEVEL_DEBUG, __LINE__, item_type);
                     return false;
                 }
 
@@ -1035,7 +1034,7 @@ namespace esphome
                 {
                     // значит последовательность закончилась, надо её очистить
                     // при очистке последовательности будет и _sequence_current_step обнулён
-                    _debugMsg(F("Sequence [step %u]: maximum step reached"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
+                    _debugMsg("Sequence [step %u]: maximum step reached", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
                     _clearSequence();
                     return;
                 }
@@ -1048,7 +1047,7 @@ namespace esphome
                     // если указатель на функцию пустой, то прерываем последовательность
                     if (_sequence[_sequence_current_step].func == nullptr)
                     {
-                        _debugMsg(F("Sequence [step %u]: function pointer is NULL, sequence broken"), ESPHOME_LOG_LEVEL_WARN, __LINE__, _sequence_current_step);
+                        _debugMsg("Sequence [step %u]: function pointer is NULL, sequence broken", ESPHOME_LOG_LEVEL_WARN, __LINE__, _sequence_current_step);
                         _clearSequence();
                         return;
                     }
@@ -1057,7 +1056,7 @@ namespace esphome
                     if (_sequence[_sequence_current_step].msec == 0)
                     {
                         _sequence[_sequence_current_step].msec = millis();
-                        _debugMsg(F("Sequence [step %u]: step started"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
+                        _debugMsg("Sequence [step %u]: step started", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
                     }
 
                     // если таймаут не указан, берем значение по-умолчанию
@@ -1067,7 +1066,7 @@ namespace esphome
                     // если время вышло, то отчитываемся в лог и очищаем последовательность
                     if (millis() - _sequence[_sequence_current_step].msec >= _sequence[_sequence_current_step].timeout)
                     {
-                        _debugMsg(F("Sequence  [step %u]: step timed out (it took %u ms instead of %u ms)"), ESPHOME_LOG_LEVEL_WARN, __LINE__, _sequence_current_step, millis() - _sequence[_sequence_current_step].msec, _sequence[_sequence_current_step].timeout);
+                        _debugMsg("Sequence  [step %u]: step timed out (it took %u ms instead of %u ms)", ESPHOME_LOG_LEVEL_WARN, __LINE__, _sequence_current_step, millis() - _sequence[_sequence_current_step].msec, _sequence[_sequence_current_step].timeout);
                         _clearSequence();
                         return;
                     }
@@ -1078,7 +1077,7 @@ namespace esphome
                     // единственное исключение - таймауты
                     if (!(this->*_sequence[_sequence_current_step].func)())
                     {
-                        _debugMsg(F("Sequence  [step %u]: error was occur in step function"), ESPHOME_LOG_LEVEL_WARN, __LINE__, _sequence_current_step, millis() - _sequence[_sequence_current_step].msec);
+                        _debugMsg("Sequence  [step %u]: error was occur in step function", ESPHOME_LOG_LEVEL_WARN, __LINE__, _sequence_current_step, millis() - _sequence[_sequence_current_step].msec);
                         _clearSequence();
                         return;
                     }
@@ -1094,13 +1093,13 @@ namespace esphome
                     if (_sequence[_sequence_current_step].msec == 0)
                     {
                         _sequence[_sequence_current_step].msec = millis();
-                        _debugMsg(F("Sequence [step %u]: begin delay (%u ms)"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step, _sequence[_sequence_current_step].timeout);
+                        _debugMsg("Sequence [step %u]: begin delay (%u ms)", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step, _sequence[_sequence_current_step].timeout);
                     }
 
                     // если время вышло, то переходим на следующий шаг
                     if (millis() - _sequence[_sequence_current_step].msec >= _sequence[_sequence_current_step].timeout)
                     {
-                        _debugMsg(F("Sequence  [step %u]: delay culminated (plan = %u ms, fact = %u ms)"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step, _sequence[_sequence_current_step].timeout, millis() - _sequence[_sequence_current_step].msec);
+                        _debugMsg("Sequence  [step %u]: delay culminated (plan = %u ms, fact = %u ms)", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step, _sequence[_sequence_current_step].timeout, millis() - _sequence[_sequence_current_step].msec);
                         _sequence_current_step++;
                     }
                     break;
@@ -1109,7 +1108,7 @@ namespace esphome
                 case AC_SIT_NONE: // шаги закончились
                 default:          // или какой-то мусор в последовательности
                     // надо очистить последовательность и уходить
-                    _debugMsg(F("Sequence [step %u]: sequence complete"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
+                    _debugMsg("Sequence [step %u]: sequence complete", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
                     _clearSequence();
                     break;
                 }
@@ -1160,7 +1159,7 @@ namespace esphome
             {
                 if (pckt == nullptr)
                 {
-                    _debugMsg(F("Clear packet error: pointer is NULL!"), ESPHOME_LOG_LEVEL_ERROR, __LINE__);
+                    _debugMsg("Clear packet error: pointer is NULL!", ESPHOME_LOG_LEVEL_ERROR, __LINE__);
                     return;
                 }
                 pckt->crc = nullptr;
@@ -1216,23 +1215,23 @@ namespace esphome
                 switch (state)
                 {
                 case ACSM_IDLE:
-                    _debugMsg(F("State changed to ACSM_IDLE."), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
+                    _debugMsg("State changed to ACSM_IDLE.", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
                     break;
 
                 case ACSM_RECEIVING_PACKET:
-                    _debugMsg(F("State changed to ACSM_RECEIVING_PACKET."), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
+                    _debugMsg("State changed to ACSM_RECEIVING_PACKET.", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
                     break;
 
                 case ACSM_PARSING_PACKET:
-                    _debugMsg(F("State changed to ACSM_PARSING_PACKET."), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
+                    _debugMsg("State changed to ACSM_PARSING_PACKET.", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
                     break;
 
                 case ACSM_SENDING_PACKET:
-                    _debugMsg(F("State changed to ACSM_SENDING_PACKET."), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
+                    _debugMsg("State changed to ACSM_SENDING_PACKET.", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
                     break;
 
                 default:
-                    _debugMsg(F("State changed to ACSM_IDLE by default. Given state is %02X."), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, state);
+                    _debugMsg("State changed to ACSM_IDLE by default. Given state is %02X.", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, state);
                     _ac_state = ACSM_IDLE;
                     break;
                 }
@@ -1263,7 +1262,7 @@ namespace esphome
                     // надо эту инфу вывалить в лог
                     if (_inPacket.bytesLoaded > 0)
                     {
-                        _debugMsg(F("Start byte received but there are some unparsed bytes in the buffer:"), ESPHOME_LOG_LEVEL_DEBUG, __LINE__);
+                        _debugMsg("Start byte received but there are some unparsed bytes in the buffer:", ESPHOME_LOG_LEVEL_DEBUG, __LINE__);
                         _debugPrintPacket(&_inPacket, ESPHOME_LOG_LEVEL_DEBUG, __LINE__);
                     }
                     _clearInPacket();
@@ -1286,7 +1285,7 @@ namespace esphome
                         // если буфер уже полон, надо его вывалить в лог и очистить
                         if (_inPacket.bytesLoaded >= AC_BUFFER_SIZE)
                         {
-                            _debugMsg(F("Some unparsed data on the bus:"), ESPHOME_LOG_LEVEL_DEBUG, __LINE__);
+                            _debugMsg("Some unparsed data on the bus:", ESPHOME_LOG_LEVEL_DEBUG, __LINE__);
                             _debugPrintPacket(&_inPacket, ESPHOME_LOG_LEVEL_DEBUG, __LINE__);
                             _clearInPacket();
                         }
@@ -1302,7 +1301,7 @@ namespace esphome
                     // если в буфере пакета данных уже под завязку, то надо сообщить о проблеме и выйти
                     if (_inPacket.bytesLoaded >= AC_BUFFER_SIZE)
                     {
-                        _debugMsg(F("Receiver: packet buffer overflow!"), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                        _debugMsg("Receiver: packet buffer overflow!", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                         _debugPrintPacket(&_inPacket, ESPHOME_LOG_LEVEL_WARN, __LINE__);
                         _clearInPacket();
                         _setStateMachineState(ACSM_IDLE);
@@ -1323,7 +1322,7 @@ namespace esphome
                         if (_inPacket.header->body_length > 0)
                             _inPacket.body = &(_inPacket.data[AC_HEADER_SIZE]);
 
-                        _debugMsg(F("Header loaded: timestamp = %010u, start byte = %02X, packet type = %02X, body size = %02X"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _inPacket.msec, _inPacket.header->start_byte, _inPacket.header->packet_type, _inPacket.header->body_length);
+                        _debugMsg("Header loaded: timestamp = %010u, start byte = %02X, packet type = %02X, body size = %02X", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _inPacket.msec, _inPacket.header->start_byte, _inPacket.header->packet_type, _inPacket.header->body_length);
                     }
 
                     // если все байты пакета загружены, надо его распарсить
@@ -1331,8 +1330,8 @@ namespace esphome
                     // то на следующей итерации будет ошибка о переполнении буфера, которая в начале цикла while
                     if (_inPacket.bytesLoaded == AC_HEADER_SIZE + _inPacket.header->body_length + 2)
                     {
-                        _debugMsg(F("Packet loaded: timestamp = %010u, start byte = %02X, packet type = %02X, body size = %02X, crc = [%02X, %02X]."), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _inPacket.msec, _inPacket.header->start_byte, _inPacket.header->packet_type, _inPacket.header->body_length, _inPacket.crc->crc[0], _inPacket.crc->crc[1]);
-                        _debugMsg(F("Loaded %02u bytes for a %u ms."), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _inPacket.bytesLoaded, (millis() - _inPacket.msec));
+                        _debugMsg("Packet loaded: timestamp = %010u, start byte = %02X, packet type = %02X, body size = %02X, crc = [%02X, %02X].", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _inPacket.msec, _inPacket.header->start_byte, _inPacket.header->packet_type, _inPacket.header->body_length, _inPacket.crc->crc[0], _inPacket.crc->crc[1]);
+                        _debugMsg("Loaded %02u bytes for a %u ms.", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _inPacket.bytesLoaded, (millis() - _inPacket.msec));
                         _debugPrintPacket(&_inPacket, ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
                         _setStateMachineState(ACSM_PARSING_PACKET);
                         return;
@@ -1342,7 +1341,7 @@ namespace esphome
                 // если пакет не загружен, а время вышло, то надо вернуться в IDLE
                 if (millis() - _inPacket.msec >= this->_packet_timeout)
                 {
-                    _debugMsg(F("Receiver: packet timed out!"), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("Receiver: packet timed out!", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     _debugPrintPacket(&_inPacket, ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     _clearInPacket();
                     _setStateMachineState(ACSM_IDLE);
@@ -1355,7 +1354,7 @@ namespace esphome
             {
                 if (!_checkCRC(&_inPacket))
                 {
-                    _debugMsg(F("Parser: packet CRC fail!"), ESPHOME_LOG_LEVEL_ERROR, __LINE__);
+                    _debugMsg("Parser: packet CRC fail!", ESPHOME_LOG_LEVEL_ERROR, __LINE__);
                     _debugPrintPacket(&_inPacket, ESPHOME_LOG_LEVEL_ERROR, __LINE__);
                     _clearInPacket();
                     _setStateMachineState(ACSM_IDLE);
@@ -1378,14 +1377,14 @@ namespace esphome
                     if (_inPacket.header->body_length != 0)
                     { // у входящего ping-пакета тело должно отсутствовать
                         // если тело есть, то жалуемся в лог
-                        _debugMsg(F("Parser: ping packet should not to have body. Received one has body length %02X."), ESPHOME_LOG_LEVEL_WARN, __LINE__, _inPacket.header->body_length);
+                        _debugMsg("Parser: ping packet should not to have body. Received one has body length %02X.", ESPHOME_LOG_LEVEL_WARN, __LINE__, _inPacket.header->body_length);
                         // очищаем пакет
                         _clearInPacket();
                         _setStateMachineState(ACSM_IDLE);
                         break;
                     }
 
-                    _debugMsg(F("Parser: ping packet received"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
+                    _debugMsg("Parser: ping packet received", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
                     // поднимаем флаг, что есть коннект с кондиционером
                     _has_connection = true;
 
@@ -1408,7 +1407,7 @@ namespace esphome
                     _setCRC16(&_outPacket);
                     _outPacket.bytesLoaded = AC_HEADER_SIZE + _outPacket.header->body_length + 2;
 
-                    _debugMsg(F("Parser: generated ping answer. Waiting for sending."), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
+                    _debugMsg("Parser: generated ping answer. Waiting for sending.", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
 
                     // до отправки пинг-ответа проверяем, не выполнялась ли стартовая последовательность команд
                     // по задумке она выполняется после подключения к кондиционеру после ответа на первый пинг
@@ -1426,7 +1425,7 @@ namespace esphome
                 case AC_PTYPE_CMD:
                 { // команда сплиту; модуль отправляет такие команды, когда что-то хочет от сплита
                     //  сплит такие команды отправлять не должен, поэтому жалуемся в лог
-                    _debugMsg(F("Parser: packet type=0x06 received from HVAC. This isn't expected."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("Parser: packet type=0x06 received from HVAC. This isn't expected.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     // очищаем пакет
                     _clearInPacket();
                     _setStateMachineState(ACSM_IDLE);
@@ -1435,12 +1434,12 @@ namespace esphome
 
                 case AC_PTYPE_INFO:
                 { // информационный пакет
-                    _debugMsg(F("Parser: status packet received"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
+                    _debugMsg("Parser: status packet received", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
                     // смотрим тип поступившего пакета по второму байту тела
                     // но вначале проверяем, что такое тело вообще есть
                     if ((_inPacket.body == nullptr) || (_inPacket.bytesLoaded < AC_HEADER_SIZE + 4) || (_inPacket.header->body_length < 2))
                     {
-                        _debugMsg(F("Parser: packet type=0x07 without body. Error!"), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                        _debugMsg("Parser: packet type=0x07 without body. Error!", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                         _clearInPacket();
                         _setStateMachineState(ACSM_IDLE);
                         break;
@@ -1450,7 +1449,7 @@ namespace esphome
                     {
                     case AC_CMD_STATUS_SMALL:
                     { // маленький пакет статуса кондиционера
-                        _debugMsg(F("Parser: status packet type = small"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
+                        _debugMsg("Parser: status packet type = small", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
                         stateChangedFlag = false;
 
                         // будем обращаться к телу пакета через указатель на структуру
@@ -1540,7 +1539,7 @@ namespace esphome
                     case AC_CMD_STATUS_PERIODIC:
                     { // раз в 10 минут рассылается сплитом, структура аналогична большому пакету статуса
                         // TODO: вроде как AC_CMD_STATUS_PERIODIC могут быть и с другими кодами; пока что другие будут игнорироваться; если это будет критично, надо будет поправить
-                        _debugMsg(F("Parser: status packet type = big or periodic"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
+                        _debugMsg("Parser: status packet type = big or periodic", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
                         stateChangedFlag = false;
 
                         // будем обращаться к телу пакета через указатель на структуру
@@ -1612,7 +1611,7 @@ namespace esphome
                     }
 
                     default:
-                        _debugMsg(F("Parser: status packet type = unknown (%02X)"), ESPHOME_LOG_LEVEL_WARN, __LINE__, _inPacket.body[1]);
+                        _debugMsg("Parser: status packet type = unknown (%02X)", ESPHOME_LOG_LEVEL_WARN, __LINE__, _inPacket.body[1]);
                         break;
                     }
                     _setStateMachineState(ACSM_IDLE);
@@ -1641,18 +1640,18 @@ namespace esphome
                 // если нет исходящего пакета, то выходим
                 if ((_outPacket.msec == 0) || (_outPacket.crc == nullptr) || (_outPacket.bytesLoaded == 0))
                 {
-                    _debugMsg(F("Sender: no packet to send."), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
+                    _debugMsg("Sender: no packet to send.", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
                     _setStateMachineState(ACSM_IDLE);
                     return;
                 }
 
-                _debugMsg(F("Sender: sending packet."), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
+                _debugMsg("Sender: sending packet.", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
 
                 _ac_serial->write_array(_outPacket.data, _outPacket.bytesLoaded);
                 _ac_serial->flush();
 
                 _debugPrintPacket(&_outPacket, ESPHOME_LOG_LEVEL_DEBUG, __LINE__);
-                _debugMsg(F("Sender: %u bytes sent (%u ms)."), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _outPacket.bytesLoaded, millis() - _outPacket.msec);
+                _debugMsg("Sender: %u bytes sent (%u ms).", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _outPacket.bytesLoaded, millis() - _outPacket.msec);
                 _clearOutPacket();
 
                 _setStateMachineState(ACSM_IDLE);
@@ -1664,7 +1663,7 @@ namespace esphome
              * msg - сообщение, выводимое в лог
              * line - строка, на которой произошел вызов (удобно при отладке)
              */
-            void _debugMsg(const String &msg, uint8_t dbgLevel = ESPHOME_LOG_LEVEL_DEBUG, unsigned int line = 0, ...)
+            void _debugMsg(const char *msg, uint8_t dbgLevel = ESPHOME_LOG_LEVEL_DEBUG, unsigned int line = 0, ...)
             {
                 if (dbgLevel < ESPHOME_LOG_LEVEL_NONE)
                     dbgLevel = ESPHOME_LOG_LEVEL_NONE;
@@ -1676,7 +1675,7 @@ namespace esphome
 
                 va_list vl;
                 va_start(vl, line);
-                esp_log_vprintf_(dbgLevel, TAG, line, msg.c_str(), vl);
+                esp_log_vprintf_(dbgLevel, TAG, line, msg, vl);
                 va_end(vl);
             }
 
@@ -1705,7 +1704,7 @@ namespace esphome
                 if ((!notAPacket) && (!HOLMES_WORKS))
                     return;
 
-                String st = "";
+		std::string st = "";
                 char textBuf[11];
 
                 // заполняем время получения пакета
@@ -1751,7 +1750,7 @@ namespace esphome
                     st += HOLMES_DELIMITER;
                 }
 
-                _debugMsg(st, dbgLevel, line);
+                _debugMsg(st.c_str(), dbgLevel, line);
             }
 
             /** расчет CRC16 для блока данных data длиной len
@@ -1816,7 +1815,7 @@ namespace esphome
                     pack = &_inPacket;
                 if (pack->bytesLoaded < AC_HEADER_SIZE)
                 {
-                    _debugMsg(F("CRC check: incoming packet size error."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("CRC check: incoming packet size error.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false;
                 }
                 // если забыли указатель на crc установить, то устанавливаем
@@ -2044,7 +2043,7 @@ namespace esphome
                 _sequence[_sequence_current_step].packet_type = AC_SPT_SENT_PACKET;
 
                 // Отчитываемся в лог
-                _debugMsg(F("Sequence [step %u]: small status request generated:"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
+                _debugMsg("Sequence [step %u]: small status request generated:", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
                 _debugPrintPacket(&_outPacket, ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
 
                 // увеличиваем текущий шаг
@@ -2082,16 +2081,16 @@ namespace esphome
                     _copyPacket(&_last_raw_data.last_small_info_packet, &_inPacket);
 
                     // отчитываемся в лог и переходим к следующему шагу
-                    _debugMsg(F("Sequence [step %u]: correct small status packet received"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
+                    _debugMsg("Sequence [step %u]: correct small status packet received", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
                     _sequence_current_step++;
                 }
                 else
                 {
                     // если пакет не подходящий, то отчитываемся в лог...
-                    _debugMsg(F("Sequence [step %u]: irrelevant incoming packet"), ESPHOME_LOG_LEVEL_WARN, __LINE__, _sequence_current_step);
-                    _debugMsg(F("Incoming packet:"), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("Sequence [step %u]: irrelevant incoming packet", ESPHOME_LOG_LEVEL_WARN, __LINE__, _sequence_current_step);
+                    _debugMsg("Incoming packet:", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     _debugPrintPacket(&_inPacket, ESPHOME_LOG_LEVEL_WARN, __LINE__);
-                    _debugMsg(F("Sequence packet needed: PACKET_TYPE = %02X, CMD = %02X"), ESPHOME_LOG_LEVEL_WARN, __LINE__, AC_PTYPE_INFO, AC_CMD_STATUS_SMALL);
+                    _debugMsg("Sequence packet needed: PACKET_TYPE = %02X, CMD = %02X", ESPHOME_LOG_LEVEL_WARN, __LINE__, AC_PTYPE_INFO, AC_CMD_STATUS_SMALL);
                     // ...и прерываем последовательность, так как вернем false
                 }
                 return relevant;
@@ -2109,7 +2108,7 @@ namespace esphome
                 _sequence[_sequence_current_step].packet_type = AC_SPT_SENT_PACKET;
 
                 // Отчитываемся в лог
-                _debugMsg(F("Sequence [step %u]: big status request generated:"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
+                _debugMsg("Sequence [step %u]: big status request generated:", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
                 _debugPrintPacket(&_outPacket, ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
 
                 // увеличиваем текущий шаг
@@ -2147,16 +2146,16 @@ namespace esphome
                     _copyPacket(&_last_raw_data.last_big_info_packet, &_inPacket);
 
                     // отчитываемся в лог и переходим к следующему шагу
-                    _debugMsg(F("Sequence [step %u]: correct big status packet received"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
+                    _debugMsg("Sequence [step %u]: correct big status packet received", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
                     _sequence_current_step++;
                 }
                 else
                 {
                     // если пакет не подходящий, то отчитываемся в лог...
-                    _debugMsg(F("Sequence [step %u]: irrelevant incoming packet"), ESPHOME_LOG_LEVEL_WARN, __LINE__, _sequence_current_step);
-                    _debugMsg(F("Incoming packet:"), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("Sequence [step %u]: irrelevant incoming packet", ESPHOME_LOG_LEVEL_WARN, __LINE__, _sequence_current_step);
+                    _debugMsg("Incoming packet:", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     _debugPrintPacket(&_inPacket, ESPHOME_LOG_LEVEL_WARN, __LINE__);
-                    _debugMsg(F("Sequence packet needed: PACKET_TYPE = %02X, CMD = %02X"), ESPHOME_LOG_LEVEL_WARN, __LINE__, AC_PTYPE_INFO, AC_CMD_STATUS_BIG);
+                    _debugMsg("Sequence packet needed: PACKET_TYPE = %02X, CMD = %02X", ESPHOME_LOG_LEVEL_WARN, __LINE__, AC_PTYPE_INFO, AC_CMD_STATUS_BIG);
                     // ...и прерываем последовательность
                 }
                 return relevant;
@@ -2174,7 +2173,7 @@ namespace esphome
                 _sequence[_sequence_current_step].packet_type = AC_SPT_SENT_PACKET;
 
                 // Отчитываемся в лог
-                _debugMsg(F("Sequence [step %u]: doCommand request generated:"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
+                _debugMsg("Sequence [step %u]: doCommand request generated:", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
                 _debugPrintPacket(&_outPacket, ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
 
                 // увеличиваем текущий шаг
@@ -2210,16 +2209,16 @@ namespace esphome
                 // если пакет подходит, значит можно переходить к следующему шагу
                 if (relevant)
                 {
-                    _debugMsg(F("Sequence [step %u]: correct doCommand packet received"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
+                    _debugMsg("Sequence [step %u]: correct doCommand packet received", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
                     _sequence_current_step++;
                 }
                 else
                 {
                     // если пакет не подходящий, то отчитываемся в лог...
-                    _debugMsg(F("Sequence [step %u]: irrelevant incoming packet"), ESPHOME_LOG_LEVEL_WARN, __LINE__, _sequence_current_step);
-                    _debugMsg(F("Incoming packet:"), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("Sequence [step %u]: irrelevant incoming packet", ESPHOME_LOG_LEVEL_WARN, __LINE__, _sequence_current_step);
+                    _debugMsg("Incoming packet:", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     _debugPrintPacket(&_inPacket, ESPHOME_LOG_LEVEL_WARN, __LINE__);
-                    _debugMsg(F("Sequence packet needed: PACKET_TYPE = %02X, CMD = %02X"), ESPHOME_LOG_LEVEL_WARN, __LINE__, AC_PTYPE_INFO, AC_CMD_STATUS_BIG);
+                    _debugMsg("Sequence packet needed: PACKET_TYPE = %02X, CMD = %02X", ESPHOME_LOG_LEVEL_WARN, __LINE__, AC_PTYPE_INFO, AC_CMD_STATUS_BIG);
                     // ...и прерываем последовательность
                 }
                 return relevant;
@@ -2237,7 +2236,7 @@ namespace esphome
                 _sequence[_sequence_current_step].packet_type = AC_SPT_SENT_PACKET;
 
                 // Отчитываемся в лог
-                _debugMsg(F("Sequence [step %u]: Test Packet request generated:"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
+                _debugMsg("Sequence [step %u]: Test Packet request generated:", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _sequence_current_step);
                 _debugPrintPacket(&_outPacket, ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
 
                 // увеличиваем текущий шаг
@@ -2265,7 +2264,7 @@ namespace esphome
                 // нет смысла в последовательности, если нет коннекта с кондиционером
                 if (!get_has_connection())
                 {
-                    _debugMsg(F("displaySequence: no pings from HVAC. It seems like no AC connected."), ESPHOME_LOG_LEVEL_ERROR, __LINE__);
+                    _debugMsg("displaySequence: no pings from HVAC. It seems like no AC connected.", ESPHOME_LOG_LEVEL_ERROR, __LINE__);
                     return false;
                 }
                 if (dsp == AC_DISPLAY_UNTOUCHED)
@@ -2279,7 +2278,7 @@ namespace esphome
                 if (!commandSequence(&cmd))
                     return false;
 
-                _debugMsg(F("displaySequence: loaded (display = %02X)"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, dsp);
+                _debugMsg("displaySequence: loaded (display = %02X)", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, dsp);
                 return true;
             }
 
@@ -2323,11 +2322,11 @@ namespace esphome
                     if (cmd->power == global_presets[num_preset].power && cmd->mode == global_presets[num_preset].mode)
                     {                                                                     // контроль инициализации
                         memcpy(cmd, &(global_presets[num_preset]), AC_COMMAND_BASE_SIZE); // просто копируем из массива
-                        _debugMsg(F("Preset %02d read from RAM massive."), ESPHOME_LOG_LEVEL_WARN, __LINE__, num_preset);
+                        _debugMsg("Preset %02d read from RAM massive.", ESPHOME_LOG_LEVEL_WARN, __LINE__, num_preset);
                     }
                     else
                     {
-                        _debugMsg(F("Preset %02d not initialized, use current settings."), ESPHOME_LOG_LEVEL_WARN, __LINE__, num_preset);
+                        _debugMsg("Preset %02d not initialized, use current settings.", ESPHOME_LOG_LEVEL_WARN, __LINE__, num_preset);
                     }
                 }
             }
@@ -2340,20 +2339,20 @@ namespace esphome
                 {                                                                     // содержимое пресетов разное
                     memcpy(&(global_presets[num_preset]), cmd, AC_COMMAND_BASE_SIZE); // копируем пресет в массив
 
-                    _debugMsg(F("Save preset %02d to NVRAM."), ESPHOME_LOG_LEVEL_WARN, __LINE__, num_preset);
+                    _debugMsg("Save preset %02d to NVRAM.", ESPHOME_LOG_LEVEL_WARN, __LINE__, num_preset);
                     if (storage.save(global_presets))
                     {
                         if (!global_preferences->sync()) // сохраняем все пресеты
-                            _debugMsg(F("Sync NVRAM error ! (load result: %02d)"), ESPHOME_LOG_LEVEL_ERROR, __LINE__, load_presets_result);
+                            _debugMsg("Sync NVRAM error ! (load result: %02d)", ESPHOME_LOG_LEVEL_ERROR, __LINE__, load_presets_result);
                     }
                     else
                     {
-                        _debugMsg(F("Save presets to flash ERROR ! (load result: %02d)"), ESPHOME_LOG_LEVEL_ERROR, __LINE__, load_presets_result);
+                        _debugMsg("Save presets to flash ERROR ! (load result: %02d)", ESPHOME_LOG_LEVEL_ERROR, __LINE__, load_presets_result);
                     }
                 }
                 else
                 {
-                    _debugMsg(F("Preset %02d has not been changed, Saving canceled."), ESPHOME_LOG_LEVEL_WARN, __LINE__, num_preset);
+                    _debugMsg("Preset %02d has not been changed, Saving canceled.", ESPHOME_LOG_LEVEL_WARN, __LINE__, num_preset);
                 }
             }
 #endif
@@ -2420,7 +2419,7 @@ namespace esphome
             // вызывается для публикации нового состояния кондиционера
             void stateChanged()
             {
-                _debugMsg(F("State changed, let's publish it."), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
+                _debugMsg("State changed, let's publish it.", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
 
                 // экшины кондиционера (информация для пользователя, что кондиционер сейчас делает)
                 // сейчас экшины рассчётные и могут не отражать реального положения дел, но других вариантов не придумалось
@@ -2541,7 +2540,7 @@ namespace esphome
                     }
                 }
 
-                _debugMsg(F("Action mode: %i"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, this->action);
+                _debugMsg("Action mode: %i", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, this->action);
 
                 /*************************** POWER & MODE ***************************/
                 if (_current_ac_state.power == AC_POWER_ON)
@@ -2570,7 +2569,7 @@ namespace esphome
                         break;
 
                     default:
-                        _debugMsg(F("Warning: unknown air conditioner mode."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                        _debugMsg("Warning: unknown air conditioner mode.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                         break;
                     }
                 }
@@ -2579,7 +2578,7 @@ namespace esphome
                     this->mode = climate::CLIMATE_MODE_OFF;
                 }
 
-                _debugMsg(F("Climate mode: %i"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, this->mode);
+                _debugMsg("Climate mode: %i", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, this->mode);
 
                 /*************************** FAN SPEED ***************************/
                 this->fan_mode = climate::CLIMATE_FAN_OFF;
@@ -2602,11 +2601,11 @@ namespace esphome
                     break;
 
                 default:
-                    _debugMsg(F("Warning: unknown fan speed."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("Warning: unknown fan speed.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     break;
                 }
 
-                _debugMsg(F("Climate fan mode: %i"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, this->fan_mode);
+                _debugMsg("Climate fan mode: %i", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, this->fan_mode);
 
                 /*************************** TURBO FAN MODE ***************************/
                 // TURBO работает в режимах FAN, COOL, HEAT, HEAT_COOL
@@ -2626,7 +2625,7 @@ namespace esphome
                     break;
                 }
 
-                _debugMsg(F("Climate fan TURBO mode: %i"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _current_ac_state.fanTurbo);
+                _debugMsg("Climate fan TURBO mode: %i", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _current_ac_state.fanTurbo);
 
                 /*************************** MUTE FAN MODE ***************************/
                 // MUTE работает в режиме FAN. В режимах HEAT, COOL, HEAT_COOL не работает. DRY не проверял.
@@ -2646,7 +2645,7 @@ namespace esphome
                     break;
                 }
 
-                _debugMsg(F("Climate fan MUTE mode: %i"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _current_ac_state.fanMute);
+                _debugMsg("Climate fan MUTE mode: %i", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _current_ac_state.fanMute);
 
                 //========================  ОТОБРАЖЕНИЕ ПРЕСЕТОВ ================================
                 /*************************** HEALTH CUSTOM PRESET ***************************/
@@ -2663,7 +2662,7 @@ namespace esphome
                     this->custom_preset = (std::string) "";
                 }
 
-                _debugMsg(F("Climate HEALTH preset: %i"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _current_ac_state.health);
+                _debugMsg("Climate HEALTH preset: %i", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _current_ac_state.health);
 
                 /*************************** SLEEP PRESET ***************************/
                 // Комбинируется только с режимами COOL и HEAT. Автоматически выключается через 7 часов.
@@ -2682,7 +2681,7 @@ namespace esphome
                     this->preset = climate::CLIMATE_PRESET_NONE;
                 }
 
-                _debugMsg(F("Climate preset: %i"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, this->preset);
+                _debugMsg("Climate preset: %i", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, this->preset);
 
                 /*************************** CLEAN CUSTOM PRESET ***************************/
                 // режим очистки кондиционера, включается (или должен включаться) при AC_POWER_OFF
@@ -2698,7 +2697,7 @@ namespace esphome
                     this->custom_preset = (std::string) "";
                 }
 
-                _debugMsg(F("Climate CLEAN preset: %i"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _current_ac_state.clean);
+                _debugMsg("Climate CLEAN preset: %i", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _current_ac_state.clean);
 
                 /*************************** ANTIFUNGUS CUSTOM PRESET ***************************/
                 // пресет просушки кондиционера после выключения
@@ -2729,7 +2728,7 @@ namespace esphome
                     break;
                 }
 
-                _debugMsg(F("Climate ANTIFUNGUS preset: %i"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _current_ac_state.mildew);
+                _debugMsg("Climate ANTIFUNGUS preset: %i", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, _current_ac_state.mildew);
 
                 /*************************** LOUVERs ***************************/
                 this->swing_mode = climate::CLIMATE_SWING_OFF;
@@ -2759,14 +2758,14 @@ namespace esphome
                     }
                 }
 
-                _debugMsg(F("Climate swing mode: %i"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, this->swing_mode);
+                _debugMsg("Climate swing mode: %i", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, this->swing_mode);
 
                 /*************************** TEMPERATURE ***************************/
                 this->target_temperature = _current_ac_state.temp_target;
-                _debugMsg(F("Target temperature: %f"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, this->target_temperature);
+                _debugMsg("Target temperature: %f", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, this->target_temperature);
 
                 this->current_temperature = _current_ac_state.temp_ambient;
-                _debugMsg(F("Room temperature: %f"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, this->current_temperature);
+                _debugMsg("Room temperature: %f", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, this->current_temperature);
 
                 /*********************************************************************/
                 /*************************** PUBLISH STATE ***************************/
@@ -3029,7 +3028,7 @@ namespace esphome
                         this->custom_fan_mode = customfanmode;
                         /*
                         } else {
-                            _debugMsg(F("TURBO fan mode is suitable in COOL and HEAT modes only."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                            _debugMsg("TURBO fan mode is suitable in COOL and HEAT modes only.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                         }
                         */
                     }
@@ -3046,7 +3045,7 @@ namespace esphome
                         cmd.fanTurbo = AC_FANTURBO_OFF; // зависимость от fanmute
                         this->custom_fan_mode = customfanmode;
                         //} else {
-                        //    _debugMsg(F("MUTE fan mode is suitable in FAN mode only."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                        //    _debugMsg("MUTE fan mode is suitable in FAN mode only.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                         //}
                     }
                 }
@@ -3078,7 +3077,7 @@ namespace esphome
                         }
                         else
                         {
-                            _debugMsg(F("SLEEP preset is suitable in COOL and HEAT modes only."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                            _debugMsg("SLEEP preset is suitable in COOL and HEAT modes only.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                         }
                         break;
 
@@ -3092,11 +3091,11 @@ namespace esphome
                         cmd.clean = AC_CLEAN_OFF;
                         this->preset = preset;
 
-                        _debugMsg(F("Clear all builtin presets."), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
+                        _debugMsg("Clear all builtin presets.", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
                         break;
                     default:
                         // никакие другие встроенные пресеты не поддерживаются
-                        _debugMsg(F("Preset %02X is unsupported."), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, preset);
+                        _debugMsg("Preset %02X is unsupported.", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, preset);
                         break;
                     }
                 }
@@ -3117,7 +3116,7 @@ namespace esphome
                         }
                         else
                         {
-                            _debugMsg(F("CLEAN preset is suitable in POWER_OFF mode only."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                            _debugMsg("CLEAN preset is suitable in POWER_OFF mode only.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                         }
                     }
                     else if (custom_preset == Constants::HEALTH)
@@ -3150,7 +3149,7 @@ namespace esphome
                         }
                         else
                         {
-                            _debugMsg(F("HEALTH preset is suitable in POWER_ON mode only."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                            _debugMsg("HEALTH preset is suitable in POWER_ON mode only.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                         }
                     }
                     else if (custom_preset == Constants::ANTIFUNGUS)
@@ -3255,31 +3254,31 @@ namespace esphome
                 // нет смысла в последовательности, если нет коннекта с кондиционером
                 if (!get_has_connection())
                 {
-                    _debugMsg(F("getStatusSmall: no pings from HVAC. It seems like no AC connected."), ESPHOME_LOG_LEVEL_ERROR, __LINE__);
+                    _debugMsg("getStatusSmall: no pings from HVAC. It seems like no AC connected.", ESPHOME_LOG_LEVEL_ERROR, __LINE__);
                     return false;
                 }
                 // есть ли место на запрос в последовательности команд?
                 if (_getFreeSequenceSpace() < 2)
                 {
-                    _debugMsg(F("getStatusSmall: not enough space in command sequence. Sequence steps doesn't loaded."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("getStatusSmall: not enough space in command sequence. Sequence steps doesn't loaded.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false;
                 }
 
                 /*************************************** getSmallInfo request ***********************************************/
                 if (!_addSequenceFuncStep(&AirCon::sq_requestSmallStatus))
                 {
-                    _debugMsg(F("getStatusSmall: getSmallInfo request sequence step fail."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("getStatusSmall: getSmallInfo request sequence step fail.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false;
                 }
                 /*************************************** getSmallInfo control ***********************************************/
                 if (!_addSequenceFuncStep(&AirCon::sq_controlSmallStatus))
                 {
-                    _debugMsg(F("getStatusSmall: getSmallInfo control sequence step fail."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("getStatusSmall: getSmallInfo control sequence step fail.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false;
                 }
                 /**************************************************************************************/
 
-                _debugMsg(F("getStatusSmall: loaded to sequence"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
+                _debugMsg("getStatusSmall: loaded to sequence", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
                 return true;
             }
 
@@ -3289,31 +3288,31 @@ namespace esphome
                 // нет смысла в последовательности, если нет коннекта с кондиционером
                 if (!get_has_connection())
                 {
-                    _debugMsg(F("getStatusBig: no pings from HVAC. It seems like no AC connected."), ESPHOME_LOG_LEVEL_ERROR, __LINE__);
+                    _debugMsg("getStatusBig: no pings from HVAC. It seems like no AC connected.", ESPHOME_LOG_LEVEL_ERROR, __LINE__);
                     return false;
                 }
                 // есть ли место на запрос в последовательности команд?
                 if (_getFreeSequenceSpace() < 2)
                 {
-                    _debugMsg(F("getStatusBig: not enough space in command sequence. Sequence steps doesn't loaded."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("getStatusBig: not enough space in command sequence. Sequence steps doesn't loaded.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false;
                 }
 
                 /*************************************** getBigInfo request ***********************************************/
                 if (!_addSequenceFuncStep(&AirCon::sq_requestBigStatus))
                 {
-                    _debugMsg(F("getStatusBig: getBigInfo request sequence step fail."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("getStatusBig: getBigInfo request sequence step fail.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false;
                 }
                 /*************************************** getBigInfo control ***********************************************/
                 if (!_addSequenceFuncStep(&AirCon::sq_controlBigStatus))
                 {
-                    _debugMsg(F("getStatusBig: getBigInfo control sequence step fail."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("getStatusBig: getBigInfo control sequence step fail.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false;
                 }
                 /**************************************************************************************/
 
-                _debugMsg(F("getStatusBig: loaded to sequence"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
+                _debugMsg("getStatusBig: loaded to sequence", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
                 return true;
             }
 
@@ -3323,23 +3322,23 @@ namespace esphome
                 // нет смысла в последовательности, если нет коннекта с кондиционером
                 if (!get_has_connection())
                 {
-                    _debugMsg(F("getStatusBigAndSmall: no pings from HVAC. It seems like no AC connected."), ESPHOME_LOG_LEVEL_ERROR, __LINE__);
+                    _debugMsg("getStatusBigAndSmall: no pings from HVAC. It seems like no AC connected.", ESPHOME_LOG_LEVEL_ERROR, __LINE__);
                     return false;
                 }
 
                 if (!getStatusSmall())
                 {
-                    _debugMsg(F("getStatusBigAndSmall: error with small status sequence."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("getStatusBigAndSmall: error with small status sequence.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false;
                 }
 
                 if (!getStatusBig())
                 {
-                    _debugMsg(F("getStatusBigAndSmall: error with big status sequence."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("getStatusBigAndSmall: error with big status sequence.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false;
                 }
 
-                _debugMsg(F("getStatusBigAndSmall: loaded to sequence"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
+                _debugMsg("getStatusBigAndSmall: loaded to sequence", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
                 return true;
             }
 
@@ -3355,18 +3354,18 @@ namespace esphome
                 // нет смысла в последовательности, если нет коннекта с кондиционером
                 if (!get_has_connection())
                 {
-                    _debugMsg(F("startupSequence: no pings from HVAC. It seems like no AC connected."), ESPHOME_LOG_LEVEL_ERROR, __LINE__);
+                    _debugMsg("startupSequence: no pings from HVAC. It seems like no AC connected.", ESPHOME_LOG_LEVEL_ERROR, __LINE__);
                     return false;
                 }
 
                 // по сути на старте надо получить от кондиционера два статуса
                 if (!getStatusBigAndSmall())
                 {
-                    _debugMsg(F("startupSequence: error with big&small status sequence."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("startupSequence: error with big&small status sequence.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false;
                 };
 
-                _debugMsg(F("startupSequence: loaded to sequence"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
+                _debugMsg("startupSequence: loaded to sequence", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
                 return true;
             }
 
@@ -3380,34 +3379,34 @@ namespace esphome
                 // нет смысла в последовательности, если нет коннекта с кондиционером
                 if (!get_has_connection())
                 {
-                    _debugMsg(F("commandSequence: no pings from HVAC. It seems like no AC connected."), ESPHOME_LOG_LEVEL_ERROR, __LINE__);
+                    _debugMsg("commandSequence: no pings from HVAC. It seems like no AC connected.", ESPHOME_LOG_LEVEL_ERROR, __LINE__);
                     return false;
                 }
 
                 // добавление начального запроса маленького статусного пакета в последовательность команд
                 if (!getStatusSmall())
                 {
-                    _debugMsg(F("commandSequence: error with first small status sequence."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("commandSequence: error with first small status sequence.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false;
                 }
 
                 // есть ли место на запрос в последовательности команд?
                 if (_getFreeSequenceSpace() < 2)
                 {
-                    _debugMsg(F("commandSequence: not enough space in command sequence. Sequence steps doesn't loaded."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("commandSequence: not enough space in command sequence. Sequence steps doesn't loaded.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false;
                 }
 
                 /*************************************** set params request ***********************************************/
                 if (!_addSequenceFuncStep(&AirCon::sq_requestDoCommand, cmd))
                 {
-                    _debugMsg(F("commandSequence: request sequence step fail."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("commandSequence: request sequence step fail.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false;
                 }
                 /*************************************** set params control ***********************************************/
                 if (!_addSequenceFuncStep(&AirCon::sq_controlDoCommand))
                 {
-                    _debugMsg(F("commandSequence: control sequence step fail."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("commandSequence: control sequence step fail.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false;
                 }
                 /**************************************************************************************/
@@ -3415,11 +3414,11 @@ namespace esphome
                 // добавление финального запроса маленького статусного пакета в последовательность команд
                 if (!getStatusSmall())
                 {
-                    _debugMsg(F("commandSequence: error with last small status sequence."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("commandSequence: error with last small status sequence.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false;
                 }
 
-                _debugMsg(F("commandSequence: loaded to sequence"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
+                _debugMsg("commandSequence: loaded to sequence", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
                 return true;
             }
 
@@ -3429,7 +3428,7 @@ namespace esphome
                 // нет смысла в последовательности, если нет коннекта с кондиционером
                 if (!get_has_connection())
                 {
-                    _debugMsg(F("powerSequence: no pings from HVAC. It seems like no AC connected."), ESPHOME_LOG_LEVEL_ERROR, __LINE__);
+                    _debugMsg("powerSequence: no pings from HVAC. It seems like no AC connected.", ESPHOME_LOG_LEVEL_ERROR, __LINE__);
                     return false;
                 }
                 if (pwr == AC_POWER_UNTOUCHED)
@@ -3443,7 +3442,7 @@ namespace esphome
                 if (!commandSequence(&cmd))
                     return false;
 
-                _debugMsg(F("powerSequence: loaded (power = %02X)"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, pwr);
+                _debugMsg("powerSequence: loaded (power = %02X)", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, pwr);
                 return true;
             }
 
@@ -3474,7 +3473,7 @@ namespace esphome
             {
                 if (data.size() == 0)
                 {
-                    _debugMsg(F("sendTestPacket: no data to send."), ESPHOME_LOG_LEVEL_ERROR, __LINE__);
+                    _debugMsg("sendTestPacket: no data to send.", ESPHOME_LOG_LEVEL_ERROR, __LINE__);
                     return false;
                 }
                 // if (data.size() > AC_BUFFER_SIZE) return false;
@@ -3482,7 +3481,7 @@ namespace esphome
                 // нет смысла в отправке, если нет коннекта с кондиционером
                 if (!get_has_connection())
                 {
-                    _debugMsg(F("sendTestPacket: no pings from HVAC. It seems like no AC connected."), ESPHOME_LOG_LEVEL_ERROR, __LINE__);
+                    _debugMsg("sendTestPacket: no pings from HVAC. It seems like no AC connected.", ESPHOME_LOG_LEVEL_ERROR, __LINE__);
                     return false;
                 }
 
@@ -3496,7 +3495,7 @@ namespace esphome
                     // всё, что не влезет в буфер - игнорируем
                     if (i >= AC_BUFFER_SIZE)
                     {
-                        _debugMsg(F("sendTestPacket: buffer size =  %02d, data length = %02d. Extra data was omitted."), ESPHOME_LOG_LEVEL_ERROR, __LINE__, AC_BUFFER_SIZE, data.size());
+                        _debugMsg("sendTestPacket: buffer size =  %02d, data length = %02d. Extra data was omitted.", ESPHOME_LOG_LEVEL_ERROR, __LINE__, AC_BUFFER_SIZE, data.size());
                         break;
                     }
                     // что влезает - копируем в буфер
@@ -3519,7 +3518,7 @@ namespace esphome
                 _outTestPacket.crc = (packet_crc_t *)&(_outTestPacket.data[AC_HEADER_SIZE + _outTestPacket.header->body_length]);
                 _setCRC16(&_outTestPacket);
 
-                _debugMsg(F("sendTestPacket: test packet loaded:"), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                _debugMsg("sendTestPacket: test packet loaded:", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                 _debugPrintPacket(&_outTestPacket, ESPHOME_LOG_LEVEL_WARN, __LINE__);
 
                 // ниже блок добавления отправки пакета в последовательность команд
@@ -3527,19 +3526,19 @@ namespace esphome
                 // есть ли место на запрос в последовательности команд?
                 if (_getFreeSequenceSpace() < 1)
                 {
-                    _debugMsg(F("sendTestPacket: not enough space in command sequence. Sequence steps doesn't loaded."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("sendTestPacket: not enough space in command sequence. Sequence steps doesn't loaded.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false;
                 }
 
                 /*************************************** sendTestPacket request ***********************************************/
                 if (!_addSequenceFuncStep(&AirCon::sq_requestTestPacket))
                 {
-                    _debugMsg(F("sendTestPacket: sendTestPacket request sequence step fail."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("sendTestPacket: sendTestPacket request sequence step fail.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false;
                 }
                 /**************************************************************************************/
 
-                _debugMsg(F("sendTestPacket: loaded to sequence"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
+                _debugMsg("sendTestPacket: loaded to sequence", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__);
 
                 return true;
             }
@@ -3550,19 +3549,19 @@ namespace esphome
                 // нет смысла в последовательности, если нет коннекта с кондиционером
                 if (!get_has_connection())
                 {
-                    _debugMsg(F("powerLimitationSetSequence: no pings from HVAC. It seems like no AC connected."), ESPHOME_LOG_LEVEL_ERROR, __LINE__);
+                    _debugMsg("powerLimitationSetSequence: no pings from HVAC. It seems like no AC connected.", ESPHOME_LOG_LEVEL_ERROR, __LINE__);
                     return false;
                 }
 
                 if (!this->_is_inverter)
                 { // если кондиционер не инверторный, то выходим
-                    _debugMsg(F("powerLimitationSetSequence: unsupported for noninverter AC."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("powerLimitationSetSequence: unsupported for noninverter AC.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false;
                 }
 
                 if(power_limit != this->_power_limitation_value_normalise(power_limit))
                 {
-                    _debugMsg(F("powerLimitationSetSequence: incorrect power limit value."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("powerLimitationSetSequence: incorrect power limit value.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false;
                 }
                 
@@ -3580,9 +3579,9 @@ namespace esphome
                 
                 if (set_on)
                 {
-                   _debugMsg(F("powerLimitationSetSequence: loaded (state = %02X, power limit = %02X)"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, cmd.power_lim_state, power_limit);
+                   _debugMsg("powerLimitationSetSequence: loaded (state = %02X, power limit = %02X)", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, cmd.power_lim_state, power_limit);
                 } else {
-                   _debugMsg(F("powerLimitationSetSequence: loaded (power limit = %02X)"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, power_limit);
+                   _debugMsg("powerLimitationSetSequence: loaded (power limit = %02X)", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, power_limit);
                 }
                 return true;
             }
@@ -3593,13 +3592,13 @@ namespace esphome
                 // нет смысла в последовательности, если нет коннекта с кондиционером
                 if (!get_has_connection())
                 {
-                    _debugMsg(F("powerLimitationOnOffSequence: no pings from HVAC. It seems like no AC connected."), ESPHOME_LOG_LEVEL_ERROR, __LINE__);
+                    _debugMsg("powerLimitationOnOffSequence: no pings from HVAC. It seems like no AC connected.", ESPHOME_LOG_LEVEL_ERROR, __LINE__);
                     return false;
                 }
 
                 if (!this->_is_inverter)
                 {
-                    _debugMsg(F("powerLimitationOnSequence: unsupported for noninverter AC."), ESPHOME_LOG_LEVEL_WARN, __LINE__);
+                    _debugMsg("powerLimitationOnSequence: unsupported for noninverter AC.", ESPHOME_LOG_LEVEL_WARN, __LINE__);
                     return false; // если кондиционер не инверторный, то выходим
                 }
                 
@@ -3615,7 +3614,7 @@ namespace esphome
                 if (!commandSequence(&cmd))
                     return false;
 
-                _debugMsg(F("powerLimitationOnOffSequence: loaded (state = %02X)"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, cmd.power_lim_state);
+                _debugMsg("powerLimitationOnOffSequence: loaded (state = %02X)", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, cmd.power_lim_state);
                 return true;
             }
 
@@ -3664,7 +3663,7 @@ namespace esphome
                     return AC_VLOUVER_FRONTEND_BOTTOM;
 
                 default:
-                    _debugMsg(F("AUXvlouverToVlouverFrontend: unknown vertical louver state = %u"), ESPHOME_LOG_LEVEL_DEBUG, __LINE__, _current_ac_state.louver.louver_v);
+                    _debugMsg("AUXvlouverToVlouverFrontend: unknown vertical louver state = %u", ESPHOME_LOG_LEVEL_DEBUG, __LINE__, _current_ac_state.louver.louver_v);
                     return AC_VLOUVER_FRONTEND_STOP;
                 }
             }
@@ -3702,7 +3701,7 @@ namespace esphome
                     return AC_LOUVERV_SWING_BOTTOM;
 
                 default:
-                    _debugMsg(F("vlouverFrontendToAUXvlouver: unknown vertical louver state = %u"), ESPHOME_LOG_LEVEL_DEBUG, __LINE__, _current_ac_state.louver.louver_v);
+                    _debugMsg("vlouverFrontendToAUXvlouver: unknown vertical louver state = %u", ESPHOME_LOG_LEVEL_DEBUG, __LINE__, _current_ac_state.louver.louver_v);
                     return AC_LOUVERV_OFF;
                 }
             }
@@ -3713,7 +3712,7 @@ namespace esphome
                 // нет смысла в последовательности, если нет коннекта с кондиционером
                 if (!get_has_connection())
                 {
-                    _debugMsg(F("setVLouverSequence: no pings from HVAC. It seems like no AC connected."), ESPHOME_LOG_LEVEL_ERROR, __LINE__);
+                    _debugMsg("setVLouverSequence: no pings from HVAC. It seems like no AC connected.", ESPHOME_LOG_LEVEL_ERROR, __LINE__);
                     return false;
                 }
                 if (vLouver == AC_LOUVERV_UNTOUCHED)
@@ -3730,7 +3729,7 @@ namespace esphome
                 if (!commandSequence(&cmd))
                     return false;
 
-                _debugMsg(F("setVLouverSequence: loaded (vLouver = %02X)"), ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, vLouver);
+                _debugMsg("setVLouverSequence: loaded (vLouver = %02X)", ESPHOME_LOG_LEVEL_VERBOSE, __LINE__, vLouver);
                 return true;
             }
 
@@ -3797,7 +3796,7 @@ namespace esphome
             {
 #if defined(PRESETS_SAVING)
                 load_presets_result = storage.load(global_presets); // читаем все пресеты из флеша
-                _debugMsg(F("Preset base read from NVRAM, result %02d."), ESPHOME_LOG_LEVEL_WARN, __LINE__, load_presets_result);
+                _debugMsg("Preset base read from NVRAM, result %02d.", ESPHOME_LOG_LEVEL_WARN, __LINE__, load_presets_result);
 #endif
 
                 // заполнение шаблона параметров отображения виджета
